@@ -41,5 +41,46 @@ CHIP ALU {
         ng;      // if (out < 0)  equals 1, else 0
 
     PARTS:
-    //// Replace this comment with your code.
+    // zero x/y if zx/zy is set
+    Mux16(a=x, b=false, sel=zx, out=maybex);
+    Mux16(a=y, b=false, sel=zy, out=maybey);
+
+    // negate (maybe zeroed) x
+    Not16(in=maybex, out=negatedx);
+    
+    // negate (maybe zeroed) y
+    Not16(in=maybey, out=negatedy);
+
+    // use negated x/y if nx/ny is set
+    Mux16(a=maybex, b=negatedx, sel=nx, out=actualx);
+    Mux16(a=maybey, b=negatedy, sel=ny, out=actualy);
+
+    // bitwise and x and y
+    And16(a=actualx, b=actualy, out=xandy);
+    
+    // add x and y 
+    Add16(a=actualx, b=actualy, out=addxy);
+
+    // apply addition or bitwise and if f is true or false respectively
+    Mux16(a=xandy, b=addxy, sel=f, out=mayberesult);
+
+    // negate out
+    Not16(in=mayberesult, out=negatedresult);
+
+    // use negated result if no is set
+    Mux16(a=mayberesult, b=negatedresult, sel=no, out=result);
+
+    // compute zr
+    And16(a[0..7]=true, b=result, out[0..7]=lowerresult);
+    And16(a[8..15]=true, b=result, out[8..15]=upperresult);
+    Or8Way(in=lowerresult, out=orlowerresult);
+    Or8Way(in=upperresult, out=orupperresult);
+    Or(a=orlowerresult, b=orupperresult, out=orresult);
+    Not(in=orresult, out=zr);
+
+    // compute ng
+    And16(a=result, b[15]=true, out[15]=ng);
+
+    // output the result
+    And16(a=result, b=true, out=out);
 }
