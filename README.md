@@ -2,7 +2,7 @@
 [nand2tetris.org/course](nand2tetris.org/course)
 
 # Projects
-- [] 1 - Boolean Logic
+- [x] 1 - Boolean Logic
 - [] 2 - Boolean Arithmetic
 - [] 3 - Memory
 - [] 4 - Machine Language
