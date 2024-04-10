@@ -1,5 +1,4 @@
-*.hdl -linguist-detectable 
-*.tst -linguist-detectable
-*.cmp -linguist-detectable
+*.tst linguist-language=text
+*.cmp linguist-language=text
 *.jack -linguist-detectable
 *.vm -linguist-detectable
