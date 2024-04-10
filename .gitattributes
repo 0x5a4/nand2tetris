@@ -1,0 +1,5 @@
+*.hdl -linguist-detectable 
+*.tst -linguist-detectable
+*.cmp -linguist-detectable
+*.jack -linguist-detectable
+*.vm -linguist-detectable
