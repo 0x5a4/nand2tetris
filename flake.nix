@@ -16,6 +16,20 @@
         pkgs = import nixpkgs {inherit system;};
       in rec {
         packages = rec {
+          submit = pkgs.writeScriptBin "run.sh" ''
+            #!/usr/bin/env bash   
+
+            if (( $# == 0)); then
+              echo "usage: submit <projectnumber>"
+              exit
+            fi
+
+            OLDPWD=$PWD
+            
+            cd $@
+            ${pkgs.zip}/bin/zip -q9r "$OLDPWD/wienstroer$@.zip" .
+          '';
+        
           nand2tetristools = pkgs.stdenv.mkDerivation {
             name = "nand2tetristools";
             src = builtins.fetchTarball {
@@ -44,8 +58,12 @@
         };
 
         apps = {
+          submit = flake-utils.lib.mkApp {
+            drv = packages.submit;
+          };
+          
           hardwaresim = flake-utils.lib.mkApp {
-            drv = self.packages.${system}.hardwaresim;
+            drv = packages.hardwaresim;
             exePath = "/bin/HardwareSimulator.sh";
           };
         };
