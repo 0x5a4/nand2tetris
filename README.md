@@ -4,7 +4,7 @@
 # Projects
 - [x] 1 - Boolean Logic
 - [x] 2 - Boolean Arithmetic
-- [ ] 3 - Memory
+- [x] 3 - Memory
 - [ ] 4 - Machine Language
 - [ ] 5 - Computer Architecture
 - [ ] 6 - Assembler

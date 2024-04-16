@@ -14,5 +14,12 @@ CHIP PC {
     OUT out[16];
     
     PARTS:
-    //// Replace this comment with your code.
+    Inc16(in=value, out=morevalue);
+    Mux16(a=morevalue, b=in, sel=load, out=incorload);
+    Mux16(a=incorload, b=false, sel=reset, out=store);
+    
+    Or(a=inc, b=load, out=doincorload);
+    Or(a=doincorload, b=reset, out=dowrite);
+    
+    Register(in=store, out=out, out=value, load=dowrite);
 }
