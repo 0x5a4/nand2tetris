@@ -55,6 +55,24 @@
             buildInputs = [pkgs.makeWrapper];
             postBuild = "wrapProgram $out/bin/HardwareSimulator.sh --prefix PATH : $out/lib/openjdk/bin";
           };
+          
+          cpusim = pkgs.symlinkJoin {
+            name = "hardwaresim";
+            paths = [nand2tetristools] ++ (with pkgs; [
+              openjdk 
+            ]);
+            buildInputs = [pkgs.makeWrapper];
+            postBuild = "wrapProgram $out/bin/CPUEmulator.sh --prefix PATH : $out/lib/openjdk/bin";
+          };
+          
+          n2ttas = pkgs.symlinkJoin {
+            name = "hardwaresim";
+            paths = [nand2tetristools] ++ (with pkgs; [
+              openjdk 
+            ]);
+            buildInputs = [pkgs.makeWrapper];
+            postBuild = "wrapProgram $out/bin/Assembler.sh --prefix PATH : $out/lib/openjdk/bin";
+          };
         };
 
         apps = {
@@ -65,6 +83,16 @@
           hardwaresim = flake-utils.lib.mkApp {
             drv = packages.hardwaresim;
             exePath = "/bin/HardwareSimulator.sh";
+          };
+          
+          cpusim = flake-utils.lib.mkApp {
+            drv = packages.cpusim;
+            exePath = "/bin/CPUEmulator.sh";
+          };
+          
+          n2ttas = flake-utils.lib.mkApp {
+            drv = packages.n2ttas;
+            exePath = "/bin/Assembler.sh";
           };
         };
       }

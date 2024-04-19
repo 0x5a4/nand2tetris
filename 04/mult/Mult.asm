@@ -8,3 +8,27 @@
 // The algorithm is based on repetitive addition.
 
 //// Replace this comment with your code.
+@R2
+M = 0
+
+@R0
+D = M
+@RETURN
+D; JEQ
+
+@R1
+D = M
+@RETURN
+D; JEQ
+
+(LOOP)
+    @R0
+    D = M
+    @R2
+    M = M + D
+    @R1
+    M = M - 1
+    D = M
+    @LOOP
+    D; JGT
+(RETURN)
