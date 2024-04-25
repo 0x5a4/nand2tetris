@@ -32,5 +32,61 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-	//// Replace this comment with your code.
+    // is this a c instruction? also decode all its parts onto seperate wires
+    Mux16( 
+        a=false, 
+        b=instruction,
+        sel=instruction[15],
+        out[0..15]=cinstruction,
+        out[0]=j3,
+        out[1]=j2,
+        out[2]=j1,
+        out[3]=d3,
+        out[4]=d2,
+        out[5]=d1,
+        out[6]=c6,
+        out[7]=c5,
+        out[8]=c4,
+        out[9]=c3,
+        out[10]=c2,
+        out[11]=c1,
+        out[12]=ca
+    );
+    
+    // is this an a instruction?
+    Mux16(a=instruction, b=false, sel=instruction[15], out[0..14]=loadaddress);
+    
+    // A register
+    Not(in=instruction[15], out=ainstruction);
+    Or(a=ainstruction, b=d1, out=loada);
+    Mux16(a[0..14]=loadaddress, b=aluout, sel=instruction[15], out=ina);
+    ARegister(load=loada, in=ina, out=outa, out[0..14]=addressM);
+    
+    // D register
+    DRegister(load=d2, in=aluout, out=outd);
+
+    // write M?
+    And(a=true, b=d3, out=writeM);
+
+    // do computation with A or M?
+    Mux16(a=outa, b=inM, sel=ca, out=outam);
+
+    // ALU stuff
+    ALU(x=outd, y=outam, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, zr=zr, ng=ng, out=aluout, out=outM);
+
+    // jumping logic
+    // if a jump flag is set, check its condition
+    And(a=j1, b=ng, out=jumplt); 
+    And(a=j2, b=zr, out=jumpeq);
+    Or(a=ng, b=zr, out=ngzr);
+    Not(in=ngzr, out=jumpgtcond);
+    And(a=j3, b=jumpgtcond, out=jumpgt);
+    
+    // should we jump? is any condition met?
+    Or8Way(in[0]=jumplt, in[1]=jumpeq, in[2]=jumpgt, out=jumpcond);
+    // test if this is a cinstruction and the jump condition is met
+    And(a=instruction[15], b=jumpcond, out=jump);
+
+    //PC
+    PC(in=outa, load=jump, inc=true, reset=reset, out[0..14]=pc);
 }

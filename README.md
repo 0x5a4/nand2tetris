@@ -6,7 +6,7 @@
 - [x] 2 - Boolean Arithmetic
 - [x] 3 - Memory
 - [x] 4 - Machine Language
-- [ ] 5 - Computer Architecture
+- [x] 5 - Computer Architecture
 - [ ] 6 - Assembler
 - [ ] 7 - VM 1: Stack Arithmetic
 - [ ] 8 - VM 2: Program Control
