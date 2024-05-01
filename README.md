@@ -7,7 +7,7 @@
 - [x] 3 - Memory
 - [x] 4 - Machine Language
 - [x] 5 - Computer Architecture
-- [ ] 6 - Assembler
+- [x] 6 - Assembler
 - [ ] 7 - VM 1: Stack Arithmetic
 - [ ] 8 - VM 2: Program Control
 - [ ] 9 - High Level Language
