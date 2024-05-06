@@ -18,6 +18,29 @@
         "type": "github"
       }
     },
+    "nand2tetris": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1715023999,
+        "narHash": "sha256-vVjXEql9AWQz/exj6KHi/k7xhinZWXOjzPj34v1oY5Y=",
+        "owner": "0x5a4",
+        "repo": "nand2tetris-flake",
+        "rev": "0f355b7ca3e2cbfb7092d6ac3eb18b4ba286611d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "0x5a4",
+        "repo": "nand2tetris-flake",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1712604496,
@@ -37,6 +60,7 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "nand2tetris": "nand2tetris",
         "nixpkgs": "nixpkgs"
       }
     },
