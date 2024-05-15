@@ -10,7 +10,7 @@ pub fn main() !u8 {
     _ = args.skip(); // skip binary name
 
     const inputFileName = args.next() orelse {
-        std.debug.print("usage: hackvm <vm file>", .{});
+        std.debug.print("usage: hackvm <vm file> <output file>", .{});
         return 1;
     };
 
@@ -41,21 +41,30 @@ pub fn main() !u8 {
     const writer = bufferedWriter.writer().any();
 
     const basename = std.fs.path.basename(inputFileName);
+    const stem = std.fs.path.stem(basename);
 
     var parser = Parser.init(reader);
-    var codegen = CodeGen{ .class_name = basename };
+    var codegen = CodeGen.init(writer, stem);
+
+    parseAndEmit(&parser, &codegen) catch |err| {
+        std.log.err("{}", .{err});
+        return 1; 
+    };
+
+    return 0;
+}
+
+fn parseAndEmit(parser: *Parser, codegen: *CodeGen) !void {
+    try codegen.emitBootstrap();
 
     while (true) {
         const maybe_inst = try parser.next();
-
         if (maybe_inst) |inst| {
-            try codegen.emit(&inst, writer);
+            try codegen.emit(&inst);
         } else {
             break;
         }
     }
-
-    return 0;
 }
 
 test {

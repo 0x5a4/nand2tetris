@@ -1,5 +1,5 @@
 {
-  description = "Zig project flake";
+  description = "hackvmc";
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";

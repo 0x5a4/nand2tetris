@@ -5,13 +5,9 @@ const Instruction = instruction.Instruction;
 const Segment = instruction.Segment;
 const SegmentWithConstant = instruction.SegmentWithConstant;
 
-const MAX_TOKEN_LENGTH = 64;
+const MAX_TOKEN_LENGTH = 256;
 
 const Parser = @This();
-
-// buffer holding the label of the last instruction (if any)
-label_buffer: [MAX_TOKEN_LENGTH]u8 = [_]u8{0} ** MAX_TOKEN_LENGTH,
-label_ptr: u8 = 0,
 
 // buffer holding the last parsed token
 token_buffer: [MAX_TOKEN_LENGTH]u8 = [_]u8{0} ** MAX_TOKEN_LENGTH,
@@ -136,7 +132,7 @@ fn readToken(
                 else => {
                     state = .token;
                     self.token_buffer[index] = byte;
-                    index += 1;
+                    index +%= 1; // too long tokens just get fucked up hehe
                 },
             },
         }
