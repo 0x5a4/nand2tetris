@@ -1,0 +1,87 @@
+class Main {
+    // Wenn diese variable hier nicht deklariert ist, dann corrupted das gesamte Grid
+    // ABER nur im nand-to-browser. Wie habe ich das herausgefunden? 3 stunden lang zeilen
+    // auskommentieren und tauschen. Nachdem ich nun volkommen wahnsinnig geworden bin 
+    // kann ich ja vielleicht anfangen tatsächlich das Spiel zu programmieren FML
+    static int garbage;
+    
+    static int selectionX;
+    static int selectionY;
+    
+    function void main() {
+        do Random.initTable();
+        do Grid.generate(18);
+        do Graphics.drawUI();
+        do Graphics.drawAll();
+
+        do Main.gameLoop();
+        
+        return;
+    }
+
+    function void gameLoop() {
+        var int keycode;
+        var int lastKeycode;
+
+        let selectionX = 8;
+        let selectionY = 8;
+
+        while (true) {
+            do Graphics.draw(selectionX, selectionY, true);
+
+            while (keycode = lastKeycode) {
+                let keycode = Keyboard.keyPressed();
+            }
+
+            let lastKeycode = keycode;
+
+            do Graphics.clear(selectionX, selectionY);
+            do Graphics.draw(selectionX, selectionY, false);
+            
+            // left 
+            if (lastKeycode = 130) {
+                do Main.moveSelection(selectionX - 1, selectionY);
+            }
+            
+            // right
+            if (lastKeycode = 132) {
+                do Main.moveSelection(selectionX + 1, selectionY);
+            }
+            
+            // up
+            if (lastKeycode = 131) {
+                do Main.moveSelection(selectionX, selectionY - 1);
+            }
+            
+            // down
+            if (lastKeycode = 133) {
+                do Main.moveSelection(selectionX, selectionY + 1);
+            }
+
+            // flagging
+            if (lastKeycode = 32) {
+                do Grid.toggleFlag(selectionX, selectionY);
+            }
+            
+            // reveal
+            if (lastKeycode = 128) {
+                do Grid.reveal(selectionX, selectionY);
+            }
+        }
+
+        return;
+    }
+
+    function void moveSelection(int x, int y) {
+        if ((x < 0) | (y < 0) | (x > 15) | (y > 15)) {
+            return;
+        }
+
+        let selectionX = x;
+        let selectionY = y;
+
+        do Graphics.draw(x, y, true);
+
+        return;
+    }
+}

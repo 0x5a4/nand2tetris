@@ -1,0 +1,45 @@
+class Tile {
+    field boolean isMine;
+    field boolean isFlagged;
+    field boolean isRevealed;
+    field int neighborCount;
+
+    constructor Tile new(boolean mine) {
+        let isMine = mine;
+        let isFlagged = false;
+        let isRevealed = true;
+        let neighborCount = 0;
+        return this;
+    }
+
+    method boolean isMine() {
+        return isMine;
+    }
+    
+    method boolean isFlagged() {
+        return isFlagged;
+    }
+    
+    method boolean isRevealed() {
+        return isRevealed;
+    }
+
+    method void toggleFlag() {
+        let isFlagged = ~isFlagged;
+        return;
+    }
+
+    method void reveal() {
+        let isRevealed = true;
+        return;
+    }
+
+    method int neighbors() {
+        return neighborCount;
+    }
+
+    method void increaseNeighbors() {
+        let neighborCount = neighborCount + 1;
+        return;
+    }
+}

@@ -1,0 +1,148 @@
+class Random {
+    static Array table; // doom style rng, yay
+    field int index;
+
+    constructor Random new(int seed) {
+        let index = seed & 127;
+        return this;
+    }
+    
+    method int next() {
+        let index = (index + 1) & 127;
+        return table[index];
+    }
+
+    function void initTable() {
+        let table = Array.new(128);
+        let table[0] = 2503;
+        let table[1] = 8709;
+        let table[2] = 27397;
+        let table[3] = 15845;
+        let table[4] = 14024;
+        let table[5] = 16394;
+        let table[6] = 31953;
+        let table[7] = 10236;
+        let table[8] = 10244;
+        let table[9] = 28259;
+        let table[10] = 27218;
+        let table[11] = 1172;
+        let table[12] = 32225;
+        let table[13] = 24835;
+        let table[14] = 15870;
+        let table[15] = 31690;
+        let table[16] = 13867;
+        let table[17] = 23248;
+        let table[18] = 15790;
+        let table[19] = 17817;
+        let table[20] = 636;
+        let table[21] = 11681;
+        let table[22] = 18390;
+        let table[23] = 13606;
+        let table[24] = 4622;
+        let table[25] = 10126;
+        let table[26] = 20219;
+        let table[27] = 26662;
+        let table[28] = 27213;
+        let table[29] = 781;
+        let table[30] = 14497;
+        let table[31] = 21038;
+        let table[32] = 614;
+        let table[33] = 22167;
+        let table[34] = 11448;
+        let table[35] = 9882;
+        let table[36] = 11863;
+        let table[37] = 19158;
+        let table[38] = 5202;
+        let table[39] = 13016;
+        let table[40] = 32019;
+        let table[41] = 12261;
+        let table[42] = 8225;
+        let table[43] = 24137;
+        let table[44] = 11576;
+        let table[45] = 26503;
+        let table[46] = 28497;
+        let table[47] = 24394;
+        let table[48] = 10527;
+        let table[49] = 32011;
+        let table[50] = 19400;
+        let table[51] = 7120;
+        let table[52] = 24518;
+        let table[53] = 30417;
+        let table[54] = 10101;
+        let table[55] = 4272;
+        let table[56] = 14469;
+        let table[57] = 8338;
+        let table[58] = 25122;
+        let table[59] = 12710;
+        let table[60] = 13455;
+        let table[61] = 31505;
+        let table[62] = 16404;
+        let table[63] = 26328;
+        let table[64] = 655;
+        let table[65] = 20688;
+        let table[66] = 14589;
+        let table[67] = 8999;
+        let table[68] = 20130;
+        let table[69] = 18531;
+        let table[70] = 10627;
+        let table[71] = 18631;
+        let table[72] = 19554;
+        let table[73] = 30882;
+        let table[74] = 29891;
+        let table[75] = 14518;
+        let table[76] = 17043;
+        let table[77] = 22307;
+        let table[78] = 12577;
+        let table[79] = 3534;
+        let table[80] = 14543;
+        let table[81] = 13801;
+        let table[82] = 23583;
+        let table[83] = 2375;
+        let table[84] = 152;
+        let table[85] = 3635;
+        let table[86] = 28885;
+        let table[87] = 20668;
+        let table[88] = 30350;
+        let table[89] = 30179;
+        let table[90] = 29934;
+        let table[91] = 13290;
+        let table[92] = 10041;
+        let table[93] = 20115;
+        let table[94] = 22463;
+        let table[95] = 26696;
+        let table[96] = 31715;
+        let table[97] = 5805;
+        let table[98] = 14709;
+        let table[99] = 31776;
+        let table[100] = 23964;
+        let table[101] = 18281;
+        let table[102] = 21293;
+        let table[103] = 32163;
+        let table[104] = 16635;
+        let table[105] = 8535;
+        let table[106] = 26288;
+        let table[107] = 17635;
+        let table[108] = 1422;
+        let table[109] = 30728;
+        let table[110] = 32167;
+        let table[111] = 8559;
+        let table[112] = 13804;
+        let table[113] = 26842;
+        let table[114] = 1162;
+        let table[115] = 29122;
+        let table[116] = 16410;
+        let table[117] = 24201;
+        let table[118] = 22356;
+        let table[119] = 22023;
+        let table[120] = 16279;
+        let table[121] = 31171;
+        let table[122] = 31980;
+        let table[123] = 24904;
+        let table[124] = 27781;
+        let table[125] = 32455;
+        let table[126] = 4988;
+        let table[127] = 5562;
+
+        return;
+    }
+}

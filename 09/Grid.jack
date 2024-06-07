@@ -1,0 +1,124 @@
+class Grid {
+    // 2 dimensional array holding all the tiles in the field
+    // "1st level" is the y axis, "2nd level" is the x axis
+    static Array tiles;
+    static int mineCount;
+
+    function Array tiles() {
+        return tiles;
+    }
+    
+    function int mineCount() {
+        return mineCount;
+    }
+
+    function Tile get(int x, int y) {
+        var Array xaxis; 
+
+        let xaxis = tiles[y];
+
+        return xaxis[x];
+    }
+    
+    function void toggleFlag(int x, int y) {
+        var Tile t; 
+        let t = Grid.get(x, y);
+
+        do t.toggleFlag();
+
+        return;
+    }
+
+    function void reveal(int x, int y) {
+        var Tile t; 
+        let t = Grid.get(x, y);
+
+        do t.reveal();
+
+        return;
+    }
+
+    function void generate(int seed) {
+        var Random random;
+        var int x;  
+        var int y;  
+        var int newSeed;
+
+        let tiles = Array.new(16);
+
+        // generate the first half of the board
+        let random = Random.new(seed);
+        let x = 0; 
+        let y = 0; 
+
+        while (y < 16) {
+            let tiles[y] = Array.new(16);
+            while (x < 16) {
+                do Grid.putTile(x, y, random);
+                let x = x + 1;
+            }
+
+            if (y = 8) {
+                // fresh rng, to prevent obvious looping of the board  
+                let newSeed = random.next();
+                let random = Random.new(newSeed);
+            }
+
+            let x = 0;
+            let y = y + 1;
+        }
+
+        return;
+    }
+
+    function void putTile(int x, int y, Random random) {
+        var boolean isMine;
+        var int ran;
+        var Array xaxis;
+        var Tile tile;
+
+        let ran = random.next();
+        let ran = ran;
+        if (ran = 0) {
+            let isMine = true;
+            let mineCount = mineCount + 1;
+        } else {
+            let isMine = false;
+        }
+        let tile = Tile.new(isMine);
+        let xaxis = tiles[y];
+
+        // collect neighboring mines and notify neighbors if this is a mine
+        do Grid.notifyNeighbor(tile, x - 1, y);
+        do Grid.notifyNeighbor(tile, x - 1, y - 1);
+        do Grid.notifyNeighbor(tile, x + 1, y - 1);
+        do Grid.notifyNeighbor(tile, x, y - 1);
+
+        let xaxis[x] = tile;
+        
+        return;
+    }
+
+    
+    function void notifyNeighbor(Tile self, int neighborX, int neighborY) {
+        var Tile neighbor;
+        var Array xaxis;
+        
+        if ((neighborX < 0) | (neighborY < 0)) {
+            return;
+        }
+
+        let xaxis = tiles[neighborY];
+        let neighbor = xaxis[neighborX];
+
+        if (self.isMine()) {
+            do neighbor.increaseNeighbors();
+        }
+
+        if (neighbor.isMine()) {
+            do self.increaseNeighbors();
+        }
+        
+        return;
+    }
+}
