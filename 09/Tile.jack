@@ -7,7 +7,7 @@ class Tile {
     constructor Tile new(boolean mine) {
         let isMine = mine;
         let isFlagged = false;
-        let isRevealed = true;
+        let isRevealed = false;
         let neighborCount = 0;
         return this;
     }
@@ -24,9 +24,9 @@ class Tile {
         return isRevealed;
     }
 
-    method void toggleFlag() {
+    method boolean toggleFlag() {
         let isFlagged = ~isFlagged;
-        return;
+        return isFlagged;
     }
 
     method void reveal() {

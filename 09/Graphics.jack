@@ -5,9 +5,34 @@ class Graphics {
         do Screen.drawLine(127, 0, 127, 255);
         do Screen.drawLine(384, 0, 384, 255);
 
-        // do Output.moveCursor(1, 50);
-        // do Output.printString("All Mines:");
-        // do Output.printInt(Grid.mineCount());
+        do Output.moveCursor(1, 50);
+        do Output.printString("All Mines:");
+        do Output.printInt(Grid.mineCount());
+
+        do Graphics.drawFlagCounter();
+        
+        return;
+    }
+
+    function void drawFlagCounter() {
+        do Output.moveCursor(3, 50);
+        do Output.printString("Flags:");
+        do Output.printInt(Grid.flagCount());
+        do Output.printString("   ");
+
+        return;
+    }
+    
+    function void win() {
+        do Output.moveCursor(11, 50);
+        do Output.printString("You won!");
+
+        return;
+    }
+    
+    function void loose() {
+        do Output.moveCursor(11, 50);
+        do Output.printString("You loose :(");
 
         return;
     }

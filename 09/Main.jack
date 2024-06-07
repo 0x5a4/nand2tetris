@@ -1,16 +1,10 @@
 class Main {
-    // Wenn diese variable hier nicht deklariert ist, dann corrupted das gesamte Grid
-    // ABER nur im nand-to-browser. Wie habe ich das herausgefunden? 3 stunden lang zeilen
-    // auskommentieren und tauschen. Nachdem ich nun volkommen wahnsinnig geworden bin 
-    // kann ich ja vielleicht anfangen tatsächlich das Spiel zu programmieren FML
-    static int garbage;
-    
     static int selectionX;
     static int selectionY;
     
     function void main() {
         do Random.initTable();
-        do Grid.generate(18);
+        do Grid.generate(5);
         do Graphics.drawUI();
         do Graphics.drawAll();
 
@@ -22,11 +16,12 @@ class Main {
     function void gameLoop() {
         var int keycode;
         var int lastKeycode;
+        var int revealResult;
 
         let selectionX = 8;
         let selectionY = 8;
 
-        while (true) {
+        while (revealResult = 0) {
             do Graphics.draw(selectionX, selectionY, true);
 
             while (keycode = lastKeycode) {
@@ -61,13 +56,29 @@ class Main {
             // flagging
             if (lastKeycode = 32) {
                 do Grid.toggleFlag(selectionX, selectionY);
+                do Graphics.drawFlagCounter();
             }
             
             // reveal
             if (lastKeycode = 128) {
-                do Grid.reveal(selectionX, selectionY);
+                let revealResult = Grid.revealWithSurrounding(selectionX, selectionY);
+
+                do Graphics.drawAll();
+                
+                if (revealResult = 1) {
+                    do Graphics.win();
+                }
+                
+                if (revealResult = 2) {
+                    do Graphics.loose();
+                }
             }
         }
+
+        do Grid.revealAll();
+        do Graphics.drawAll();
+
+        while (true) {}
 
         return;
     }

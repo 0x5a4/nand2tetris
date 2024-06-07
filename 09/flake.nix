@@ -29,7 +29,8 @@
         '';
 
         installPhase = ''
-          cat *.vm | tee $out
+          mkdir $out
+          cp *.vm $out/
         '';
       };
     
