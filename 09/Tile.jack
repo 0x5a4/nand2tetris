@@ -42,4 +42,14 @@ class Tile {
         let neighborCount = neighborCount + 1;
         return;
     }
+    
+    method void decreaseNeighbors() {
+        let neighborCount = neighborCount - 1;
+        return;
+    }
+
+    method void dontBeAMine() {
+        let isMine = false;
+        return;
+    }
 }

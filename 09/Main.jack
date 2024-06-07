@@ -3,20 +3,29 @@ class Main {
     static int selectionY;
     
     function void main() {
+        var int seed;
         do Random.initTable();
-        do Grid.generate(5);
-        do Graphics.drawUI();
-        do Graphics.drawAll();
+        do Grid.init();
 
-        do Main.gameLoop();
+        let seed = Main.showTutorial();
+
+        while (true) {
+            do Grid.generate(seed);
+            do Graphics.drawUI();
+            do Graphics.drawAll();
+
+            let seed = Main.gameLoop();
+            do Screen.clearScreen();
+        }
         
         return;
     }
 
-    function void gameLoop() {
+    function int gameLoop() {
         var int keycode;
         var int lastKeycode;
         var int revealResult;
+        var int timer;
 
         let selectionX = 8;
         let selectionY = 8;
@@ -78,9 +87,17 @@ class Main {
         do Grid.revealAll();
         do Graphics.drawAll();
 
-        while (true) {}
+        do Graphics.drawContinuePrompt();
 
-        return;
+        while ((keycode = lastKeycode)) {
+            let timer = timer + 1;
+            let keycode = Keyboard.keyPressed();
+            if (keycode = 0) {
+                let keycode = lastKeycode;
+            }
+        }
+
+        return timer;
     }
 
     function void moveSelection(int x, int y) {
@@ -94,5 +111,19 @@ class Main {
         do Graphics.draw(x, y, true);
 
         return;
+    }
+
+    function int showTutorial() {
+        var int timer;
+        
+        do Graphics.drawTutorial();
+
+        while (Keyboard.keyPressed() = 0) {
+            let timer = timer + 1;
+        }
+        
+        do Screen.clearScreen();
+
+        return timer;
     }
 }

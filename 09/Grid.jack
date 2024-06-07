@@ -2,9 +2,22 @@ class Grid {
     // 2 dimensional array holding all the tiles in the field
     // "1st level" is the y axis, "2nd level" is the x axis
     static Array tiles;
+    static boolean grace;
     static int mineCount;
     static int flagCount;
     static int revealCount;
+
+    function void init() {
+        var int i;
+        let tiles = Array.new(16);
+
+        while (i < 16) {
+            let tiles[i] = Array.new(16);
+            let i = i + 1;
+        }
+
+        return;
+    }
 
     function Array tiles() {
         return tiles;
@@ -66,8 +79,15 @@ class Grid {
         let revealCount = revealCount + 1;
 
         if (t.isMine()) {
-            return 2; 
+            if (grace) {
+                do Grid.moveTileOutOfTheWay(t, x, y);
+                do Graphics.drawMineCounter();
+            } else {
+                return 2; 
+            }
         }
+        
+        let grace = false;
 
         if (256 - revealCount = mineCount) {
             return 1;
@@ -80,6 +100,35 @@ class Grid {
         }
 
         return 0;
+    }
+
+    function void moveTileOutOfTheWay(Tile t, int x, int y) {
+        // doesnt actually move the tile out of the way lmao.
+        var int xoff; 
+        var int yoff;
+        var Tile neighbor; 
+        
+        do t.dontBeAMine();
+        let mineCount = mineCount - 1;
+        
+        let xoff = -1;
+        let yoff = -1;
+
+        while (yoff < 2) {
+            while (xoff < 2) {
+                if (~((yoff = 0) & (xoff = 0))) {
+                    let neighbor = Grid.get(x + xoff, y + yoff);
+                    do neighbor.decreaseNeighbors();
+                }
+                
+                let xoff = xoff + 1;
+            }
+
+            let xoff = -1;
+            let yoff = yoff + 1;
+        }
+        
+        return;
     }
 
     function void revealAll() {
@@ -194,7 +243,10 @@ class Grid {
         var int y;  
         var int newSeed;
 
-        let tiles = Array.new(16);
+        let grace = true;
+        let mineCount = 0;
+        let flagCount = 0;
+        let revealCount = 0;
 
         // generate the first half of the board
         let random = Random.new(seed);
@@ -202,7 +254,6 @@ class Grid {
         let y = 0; 
 
         while (y < 16) {
-            let tiles[y] = Array.new(16);
             while (x < 16) {
                 do Grid.putTile(x, y, random);
                 let x = x + 1;

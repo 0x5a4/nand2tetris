@@ -5,17 +5,33 @@ class Graphics {
         do Screen.drawLine(127, 0, 127, 255);
         do Screen.drawLine(384, 0, 384, 255);
 
-        do Output.moveCursor(1, 50);
-        do Output.printString("All Mines:");
-        do Output.printInt(Grid.mineCount());
+        do Output.moveCursor(1, 1);
+        do Output.printString("Press 'Space'");
+        do Output.moveCursor(2, 4);
+        do Output.printString("to flag");
+        
+        do Output.moveCursor(4, 1);
+        do Output.printString("Press 'Enter'");
+        do Output.moveCursor(5, 3);
+        do Output.printString("to reveal");
 
+        do Graphics.drawMineCounter();
         do Graphics.drawFlagCounter();
         
         return;
     }
+    
+    function void drawMineCounter() {
+        do Output.moveCursor(1, 49);
+        do Output.printString("All Goblins:");
+        do Output.printInt(Grid.mineCount());
+        do Output.printString("   ");
+
+        return;
+    }
 
     function void drawFlagCounter() {
-        do Output.moveCursor(3, 50);
+        do Output.moveCursor(3, 49);
         do Output.printString("Flags:");
         do Output.printInt(Grid.flagCount());
         do Output.printString("   ");
@@ -70,6 +86,8 @@ class Graphics {
             if (~t.isMine()) {
                 let neighborCount = t.neighbors();
                 do Graphics.drawNumber(location, neighborCount);
+            } else {
+                do Graphics.drawMine(location);
             }
         } else {
             if (t.isFlagged()) {
@@ -158,27 +176,41 @@ class Graphics {
 
         return;
     }
-
+    
     function void drawSelection(int location) {
         var int memAddress; 
         let memAddress = 16384+location;
+        // column 0
+        do Memory.poke(memAddress, 1984);
+        do Memory.poke(memAddress +32, 2032);
+        do Memory.poke(memAddress +64, 240);
+        do Memory.poke(memAddress +96, 248);
+        do Memory.poke(memAddress +128, 504);
+        do Memory.poke(memAddress +160, 920);
+        do Memory.poke(memAddress +192, 1816);
+        do Memory.poke(memAddress +224, 3608);
+        do Memory.poke(memAddress +256, 7168);
+        do Memory.poke(memAddress +288, 14336);
+        do Memory.poke(memAddress +320, 12288);
+        return;
+    }
 
-        do Memory.poke(memAddress, -1);
-        do Memory.poke(memAddress +32, -16381);
-        do Memory.poke(memAddress +64, -32767);
-        do Memory.poke(memAddress +96, -32767);
-        do Memory.poke(memAddress +128, -32767);
-        do Memory.poke(memAddress +160, -32767);
-        do Memory.poke(memAddress +192, -32767);
-        do Memory.poke(memAddress +224, -32767);
-        do Memory.poke(memAddress +256, -32767);
-        do Memory.poke(memAddress +288, -32767);
-        do Memory.poke(memAddress +320, -32767);
-        do Memory.poke(memAddress +352, -32767);
-        do Memory.poke(memAddress +384, -32767);
-        do Memory.poke(memAddress +416, -32767);
-        do Memory.poke(memAddress +448, -16381);
-        do Memory.poke(memAddress +480, -1);
+    function void drawMine(int location) {
+        var int memAddress; 
+        let memAddress = 16384+location;
+        // column 0
+        do Memory.poke(memAddress, 1984);
+        do Memory.poke(memAddress +32, 8176);
+        do Memory.poke(memAddress +64, 3424);
+        do Memory.poke(memAddress +96, 1984);
+        do Memory.poke(memAddress +128, 256);
+        do Memory.poke(memAddress +160, 896);
+        do Memory.poke(memAddress +192, 7280);
+        do Memory.poke(memAddress +224, 9288);
+        do Memory.poke(memAddress +256, 1088);
+        do Memory.poke(memAddress +288, 1984);
+        do Memory.poke(memAddress +320, 640);
+        do Memory.poke(memAddress +352, 1088);
         return;
     }
 
@@ -204,18 +236,17 @@ class Graphics {
     function void drawZero(int location) {
         var int memAddress; 
         let memAddress = 16384+location;
-        
-        do Memory.poke(memAddress +32, 480);
-        do Memory.poke(memAddress, 0);
-        do Memory.poke(memAddress +64, 528);
-        do Memory.poke(memAddress +96, 528);
-        do Memory.poke(memAddress +128, 528);
-        do Memory.poke(memAddress +160, 528);
-        do Memory.poke(memAddress +192, 528);
-        do Memory.poke(memAddress +224, 528);
-        do Memory.poke(memAddress +256, 528);
-        do Memory.poke(memAddress +288, 528);
-        do Memory.poke(memAddress +320, 480);
+        // column 0
+        do Memory.poke(memAddress, 768);
+        do Memory.poke(memAddress +32, 1920);
+        do Memory.poke(memAddress +64, 1928);
+        do Memory.poke(memAddress +96, 4056);
+        do Memory.poke(memAddress +128, 8184);
+        do Memory.poke(memAddress +160, 16380);
+        do Memory.poke(memAddress +192, 16380);
+        do Memory.poke(memAddress +224, 32766);
+        do Memory.poke(memAddress +256, 32766);
+        do Memory.poke(memAddress +288, 32766);
         return;
     }
 
@@ -258,16 +289,16 @@ class Graphics {
         var int memAddress; 
         let memAddress = 16384+location;
         
-        do Memory.poke(memAddress, 1984);
-        do Memory.poke(memAddress +32, 1024);
-        do Memory.poke(memAddress +64, 1024);
-        do Memory.poke(memAddress +96, 1024);
-        do Memory.poke(memAddress +128, 1984);
-        do Memory.poke(memAddress +160, 1024);
-        do Memory.poke(memAddress +192, 1024);
-        do Memory.poke(memAddress +224, 1024);
-        do Memory.poke(memAddress +256, 1024);
-        do Memory.poke(memAddress +288, 1984);
+        do Memory.poke(memAddress, 1920);
+        do Memory.poke(memAddress +32, 2112);
+        do Memory.poke(memAddress +64, 2048);
+        do Memory.poke(memAddress +96, 2048);
+        do Memory.poke(memAddress +128, 1920);
+        do Memory.poke(memAddress +160, 2048);
+        do Memory.poke(memAddress +192, 2048);
+        do Memory.poke(memAddress +224, 2048);
+        do Memory.poke(memAddress +256, 2112);
+        do Memory.poke(memAddress +288, 1920);
         return;
     }
 
@@ -353,6 +384,41 @@ class Graphics {
         do Memory.poke(memAddress +224, 1056);
         do Memory.poke(memAddress +256, 1056);
         do Memory.poke(memAddress +288, 2016);
+        return;
+    }
+
+    function void drawTutorial() {
+        do Output.printString("The local mine still contains a ton of ore and you have been");
+        do Output.println();
+        do Output.printString("tasked to find it.");
+        do Output.println();
+        do Output.printString("But beware, Goblins have been spotted around these parts so you better watch out!");
+        do Output.println();
+        do Output.printString("The previous crew lost their lives in there, but they have");
+        do Output.println();
+        do Output.printString("drawn some numbers on the floor indicating how many Goblins"); 
+        do Output.println();
+        do Output.printString("are hiding nearby.");
+        do Output.println();
+        do Output.printString("Good luck in there and watch where you're digging."); 
+        do Output.println();
+        do Output.printString("Rock and Stone, brother!");
+        
+        do Output.moveCursor(21, 18);
+        do Output.printString("Press any button to start");
+        do Output.println();
+        
+        return;
+    }
+
+    function void drawContinuePrompt() {
+        do Output.moveCursor(16, 50);
+        do Output.printString("Press any");
+        do Output.moveCursor(17, 50);
+        do Output.printString("button to");
+        do Output.moveCursor(18, 50);
+        do Output.printString("play again");
+        
         return;
     }
 }
