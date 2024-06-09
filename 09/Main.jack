@@ -14,7 +14,7 @@ class Main {
             do Graphics.drawUI();
             do Graphics.drawAll();
 
-            let seed = Main.gameLoop();
+            let seed = Main.gameLoop() + seed;
             do Screen.clearScreen();
         }
         

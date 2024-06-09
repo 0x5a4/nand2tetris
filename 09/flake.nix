@@ -1,5 +1,5 @@
 {
-  description = "hackvmc";
+  description = "diggy-digg-hole";
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";

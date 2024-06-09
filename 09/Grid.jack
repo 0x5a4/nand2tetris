@@ -259,12 +259,6 @@ class Grid {
                 let x = x + 1;
             }
 
-            if (y = 8) {
-                // fresh rng, to prevent obvious looping of the board  
-                let newSeed = random.next();
-                let random = Random.new(newSeed);
-            }
-
             let x = 0;
             let y = y + 1;
         }
