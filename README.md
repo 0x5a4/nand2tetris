@@ -11,6 +11,6 @@
 - [x] 7 - VM 1: Stack Arithmetic
 - [x] 8 - VM 2: Program Control
 - [x] 9 - High Level Language
-- [ ] 10 - Syntax Analysis
+- [x] 10 - Syntax Analysis
 - [ ] 11 - Code Generation
 - [ ] 12 - Operating System
