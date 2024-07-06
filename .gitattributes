@@ -3,3 +3,5 @@
 *.jack linguist-vendored
 *.vm linguist-vendored
 *.asm linguist-vendored
+*.hack linguist-vendored
+*.xml linguist-vendored
