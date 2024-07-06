@@ -1,4 +1,5 @@
-*.tst linguist-language=text
-*.cmp linguist-language=text
-*.jack -linguist-detectable
-*.vm -linguist-detectable
+*.tst linguist-vendored
+*.cmp linguist-vendored
+*.jack linguist-vendored
+*.vm linguist-vendored
+*.asm linguist-vendored
