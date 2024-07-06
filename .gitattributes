@@ -5,3 +5,4 @@
 *.asm linguist-vendored
 *.hack linguist-vendored
 *.xml linguist-vendored
+*.html linguist-vendored
