@@ -12,5 +12,5 @@
 - [x] 8 - VM 2: Program Control
 - [x] 9 - High Level Language
 - [x] 10 - Syntax Analysis
-- [ ] 11 - Code Generation
+- [x] 11 - Code Generation
 - [ ] 12 - Operating System

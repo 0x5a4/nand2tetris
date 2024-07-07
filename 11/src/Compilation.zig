@@ -82,7 +82,7 @@ pub fn dumpAst(self: *Self, dir: *const std.fs.Dir, path: []const u8) !void {
 pub fn compile(self: *Self, dir: *const std.fs.Dir, path: []const u8) !void {
     const basename = std.fs.path.basename(path);
     const stem = std.fs.path.stem(basename);
-    const outputPath = try std.mem.concat(self.alloc, u8, &.{ stem, ".out.vm" });
+    const outputPath = try std.mem.concat(self.alloc, u8, &.{ stem, ".vm" });
     defer self.alloc.free(outputPath);
 
     std.log.info("Compile '{s}' -> '{s}'", .{ basename, outputPath });

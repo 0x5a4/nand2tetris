@@ -48,5 +48,6 @@
         apps.test = env.app [] "zig build test -- \"$@\"";
 
         apps.jackc = nand2tetris.apps.${system}.jackcompiler;
+        apps.vmemu = nand2tetris.apps.${system}.vmemulator;
       });
 }

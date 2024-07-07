@@ -23,6 +23,7 @@ class_name: []const u8 = undefined,
 
 this_counter: u32 = 0,
 static_counter: u32 = 0,
+local_counter: u32 = 0,
 label_counter: u32 = 0,
 
 instructions: std.ArrayList(vm.Instruction),
@@ -182,10 +183,10 @@ fn emitFunctionDecl(self: *Self) Error!void {
     var arg_counter: u32 = 0;
 
     // push this if necessary
-    if (node.tag == .constructor_decl or node.tag == .method_decl) {
+    if (node.tag == .method_decl) {
         const thisSymbol = Symbol{
             .name = "this",
-            .type = "this",
+            .type = self.class_name,
             .idx = 0,
             .segment = .argument,
         };
@@ -225,8 +226,34 @@ fn emitFunctionDecl(self: *Self) Error!void {
         },
     });
 
-    // if this is a constructor, create this object
+    // if its a method, load this into pointer 0
+    if (node.tag == .method_decl) {
+        try self.instructions.appendSlice(&.{
+            .{
+                .push = .{
+                    .segment = .argument,
+                    .constant = 0,
+                },
+            },
+            .{
+                .pop = .{
+                    .segment = .pointer,
+                    .constant = 0,
+                },
+            },
+        });
+    }
+
+    // if its a constructor, create this object
     if (node.tag == .constructor_decl) {
+        const thisSymbol = Symbol{
+            .name = "this",
+            .type = self.class_name,
+            .segment = .local,
+            .idx = @intCast(self.method_symbols.items.len),
+        };
+        try self.method_symbols.append(thisSymbol);
+
         try self.instructions.appendSlice(&.{
             .{
                 .push = .{
@@ -240,6 +267,12 @@ fn emitFunctionDecl(self: *Self) Error!void {
                     .constant = 1,
                 },
             },
+            .{
+                .pop = .{
+                    .segment = .pointer,
+                    .constant = 0,
+                },
+            },
         });
     }
 
@@ -247,9 +280,10 @@ fn emitFunctionDecl(self: *Self) Error!void {
 
     // patch in local variable count
     const func_instruction = &self.instructions.items[func_instruction_index];
-    func_instruction.*.function.constant = @intCast(self.method_symbols.items.len);
+    func_instruction.*.function.constant = @intCast(self.local_counter);
 
     self.method_symbols.clearRetainingCapacity();
+    self.local_counter = 0;
 }
 
 fn emitFunctionBody(self: *Self) Error!void {
@@ -268,14 +302,12 @@ fn emitVarDecl(self: *Self) Error!void {
     const node = self.popNode();
     std.debug.assert(node.tag == .var_decl);
 
-    const child_count = node.data.var_decl - 1;
-    const var_offset = self.method_symbols.items.len;
-    var var_counter: u32 = 0;
+    var child_count = node.data.var_decl - 1;
 
     const typeNode = self.popNode();
     const varType = self.readStringLoc(typeNode.data.identifier);
 
-    while (var_counter < child_count) : (var_counter += 1) {
+    while (child_count > 0) : (child_count -= 1) {
         const identifierNode = self.popNode();
         const identifier = self.readStringLoc(identifierNode.data.identifier);
 
@@ -283,8 +315,10 @@ fn emitVarDecl(self: *Self) Error!void {
             .name = identifier,
             .type = varType,
             .segment = .local,
-            .idx = @intCast(var_counter + var_offset),
+            .idx = self.local_counter,
         };
+
+        self.local_counter += 1;
 
         try self.method_symbols.append(symbol);
     }
@@ -421,48 +455,62 @@ fn emitIfStatement(self: *Self) Error!void {
 
     try self.emitExpression();
 
-    const if_label = try std.fmt.allocPrint(self.compilation.alloc, "{s}_IF_{}", .{
+    const label_prefix = try std.fmt.allocPrint(self.compilation.alloc, "{s}_IF_{}", .{
         self.class_name,
         self.label_counter,
     });
-    errdefer self.compilation.alloc.free(if_label);
-    try self.strings_that_need_to_be_freed.append(if_label);
+    errdefer self.compilation.alloc.free(label_prefix);
+    try self.strings_that_need_to_be_freed.append(label_prefix);
+
+    const true_branch = try std.mem.concat(
+        self.compilation.alloc,
+        u8,
+        &.{ label_prefix, "_TRUE" },
+    );
+    errdefer self.compilation.alloc.free(true_branch);
+    try self.strings_that_need_to_be_freed.append(true_branch);
+
+    const false_branch = try std.mem.concat(
+        self.compilation.alloc,
+        u8,
+        &.{ label_prefix, "_FALSE" },
+    );
+    errdefer self.compilation.alloc.free(true_branch);
+    try self.strings_that_need_to_be_freed.append(false_branch);
 
     self.label_counter += 1;
 
     try self.instructions.appendSlice(&.{
-        .{ .not = {} },
-        .{ .@"if-goto" = if_label },
+        .{ .@"if-goto" = true_branch },
+        .{ .goto = false_branch },
+        .{ .label = true_branch },
     });
 
     try self.emitStatementBlock();
 
     // we have an else
     if (node.data.if_statement) {
-        const skip_else_label = try std.mem.concat(
+        const end_branch = try std.mem.concat(
             self.compilation.alloc,
             u8,
-            &.{
-                if_label,
-                "_2",
-            },
+            &.{ label_prefix, "_END" },
         );
-        errdefer self.compilation.alloc.free(skip_else_label);
-        try self.strings_that_need_to_be_freed.append(skip_else_label);
+        errdefer self.compilation.alloc.free(true_branch);
+        try self.strings_that_need_to_be_freed.append(end_branch);
 
         try self.instructions.appendSlice(&.{
-            .{ .goto = skip_else_label },
-            .{ .label = if_label },
+            .{ .goto = end_branch },
+            .{ .label = false_branch },
         });
 
         try self.emitStatementBlock();
 
         try self.instructions.append(.{
-            .label = skip_else_label,
+            .label = end_branch,
         });
     } else {
         try self.instructions.append(.{
-            .label = if_label,
+            .label = false_branch,
         });
     }
 }
@@ -550,7 +598,7 @@ fn emitUnaryOperator(self: *Self) Error!void {
     const node = self.popNode();
     std.debug.assert(node.tag == .unary_operator);
 
-    try self.emitExpression();
+    try self.emitTerm();
 
     const instruction: vm.Instruction = switch (node.data.unary_operator) {
         .not => .{ .not = {} },
@@ -568,7 +616,31 @@ fn emitFunctionCall(self: *Self) Error!void {
 
     const func_name_node = self.popNode();
     const func_name = switch (func_name_node.tag) {
-        .identifier => self.readStringLoc(func_name_node.data.identifier),
+        .identifier => blk: {
+            const identifier = self.readStringLoc(func_name_node.data.identifier);
+            const name = try std.mem.concat(
+                self.compilation.alloc,
+                u8,
+                &.{
+                    self.class_name,
+                    ".",
+                    identifier,
+                },
+            );
+            errdefer self.compilation.alloc.free(name);
+            try self.strings_that_need_to_be_freed.append(name);
+
+            parameter_count = 1;
+
+            try self.instructions.append(.{
+                .push = .{
+                    .segment = .pointer,
+                    .constant = 0,
+                },
+            });
+
+            break :blk name;
+        },
         .member_access => blk: {
             const obj_name = self.readStringLoc(func_name_node.data.member_access);
             const maybe_obj = self.lookupSymbol(obj_name);
@@ -580,10 +652,12 @@ fn emitFunctionCall(self: *Self) Error!void {
                 // method call!
                 parameter_count = 1;
 
-                try self.instructions.append(.{
-                    .push = .{
-                        .segment = obj.segment,
-                        .constant = @intCast(obj.idx),
+                try self.instructions.appendSlice(&.{
+                    .{
+                        .push = .{
+                            .segment = obj.segment,
+                            .constant = @intCast(obj.idx),
+                        },
                     },
                 });
 
@@ -776,11 +850,11 @@ fn emitConstant(self: *Self) Error!void {
             .{
                 .push = .{
                     .segment = .constant,
-                    .constant = 1,
+                    .constant = 0,
                 },
             },
             .{
-                .neg = {},
+                .not = {},
             },
         }),
         .false, .null => try self.instructions.append(.{
