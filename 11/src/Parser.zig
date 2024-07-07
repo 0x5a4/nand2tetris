@@ -37,7 +37,7 @@ pub fn parse(compilation: *Compilation, file_name: []const u8, text: []const u8)
         .tokenizer = Tokenizer.init(text),
         .compilation = compilation,
         .file_name = file_name,
-        .tree = Ast.init(compilation.alloc),
+        .tree = Ast.init(compilation.arena),
     };
 
     _ = try parser.parseClassDecl();

@@ -18,7 +18,6 @@ class_symbols: SymbolTable,
 method_symbols: SymbolTable,
 
 // this is so ugly :(
-strings_that_need_to_be_freed: std.ArrayList([]const u8),
 class_name: []const u8 = undefined,
 
 this_counter: u32 = 0,
@@ -46,7 +45,6 @@ pub fn init(compilation: *Compilation, tree: *const Ast, text: []const u8) Self 
         .tree = tree,
         .class_symbols = SymbolTable.init(compilation.alloc),
         .method_symbols = SymbolTable.init(compilation.alloc),
-        .strings_that_need_to_be_freed = std.ArrayList([]const u8).init(compilation.alloc),
         .instructions = std.ArrayList(vm.Instruction).init(compilation.alloc),
     };
 }
@@ -55,11 +53,6 @@ pub fn deinit(self: *Self) void {
     self.instructions.deinit();
     self.class_symbols.deinit();
     self.method_symbols.deinit();
-
-    for (self.strings_that_need_to_be_freed.items) |s| {
-        self.compilation.alloc.free(s);
-    }
-    self.strings_that_need_to_be_freed.deinit();
 
     self.* = undefined;
 }
@@ -173,12 +166,10 @@ fn emitFunctionDecl(self: *Self) Error!void {
     const identifier_node = self.popNode();
     const func_identifier = self.readStringLoc(identifier_node.data.identifier);
     const func_name = try std.fmt.allocPrint(
-        self.compilation.alloc,
+        self.compilation.arena,
         "{s}.{s}",
         .{ self.class_name, func_identifier },
     );
-    errdefer self.compilation.alloc.free(func_name);
-    try self.strings_that_need_to_be_freed.append(func_name);
 
     var arg_counter: u32 = 0;
 
@@ -455,28 +446,18 @@ fn emitIfStatement(self: *Self) Error!void {
 
     try self.emitExpression();
 
-    const label_prefix = try std.fmt.allocPrint(self.compilation.alloc, "{s}_IF_{}", .{
-        self.class_name,
-        self.label_counter,
-    });
-    errdefer self.compilation.alloc.free(label_prefix);
-    try self.strings_that_need_to_be_freed.append(label_prefix);
-
-    const true_branch = try std.mem.concat(
-        self.compilation.alloc,
-        u8,
-        &.{ label_prefix, "_TRUE" },
+    // construct a bunch of labels
+    const true_branch = try std.fmt.allocPrint(
+        self.compilation.arena,
+        "{s}_IF_{}_TRUE",
+        .{ self.class_name, self.label_counter },
     );
-    errdefer self.compilation.alloc.free(true_branch);
-    try self.strings_that_need_to_be_freed.append(true_branch);
 
-    const false_branch = try std.mem.concat(
-        self.compilation.alloc,
-        u8,
-        &.{ label_prefix, "_FALSE" },
+    const false_branch = try std.fmt.allocPrint(
+        self.compilation.arena,
+        "{s}_IF_{}_FALSE",
+        .{ self.class_name, self.label_counter },
     );
-    errdefer self.compilation.alloc.free(true_branch);
-    try self.strings_that_need_to_be_freed.append(false_branch);
 
     self.label_counter += 1;
 
@@ -490,13 +471,11 @@ fn emitIfStatement(self: *Self) Error!void {
 
     // we have an else
     if (node.data.if_statement) {
-        const end_branch = try std.mem.concat(
-            self.compilation.alloc,
-            u8,
-            &.{ label_prefix, "_END" },
+        const end_branch = try std.fmt.allocPrint(
+            self.compilation.arena,
+            "{s}_IF_{}_END",
+            .{ self.class_name, self.label_counter },
         );
-        errdefer self.compilation.alloc.free(true_branch);
-        try self.strings_that_need_to_be_freed.append(end_branch);
 
         try self.instructions.appendSlice(&.{
             .{ .goto = end_branch },
@@ -520,25 +499,21 @@ fn emitWhileStatement(self: *Self) Error!void {
     std.debug.assert(node.tag == .while_statement);
 
     const while_label = try std.fmt.allocPrint(
-        self.compilation.alloc,
+        self.compilation.arena,
         "{s}_WHILE_{}",
         .{ self.class_name, self.label_counter },
     );
-    errdefer self.compilation.alloc.free(while_label);
-    try self.strings_that_need_to_be_freed.append(while_label);
 
     self.label_counter += 1;
 
     const break_label = try std.mem.concat(
-        self.compilation.alloc,
+        self.compilation.arena,
         u8,
         &.{
             while_label,
             "_BREAK",
         },
     );
-    errdefer self.compilation.alloc.free(break_label);
-    try self.strings_that_need_to_be_freed.append(break_label);
 
     try self.instructions.append(.{
         .label = while_label,
@@ -568,13 +543,19 @@ fn emitExpression(self: *Self) Error!void {
     try self.emitTerm();
 
     while (child_count > 1) : (child_count -= 2) {
+        // the ast stores operators in between their operand, which we cant use.
+        // since the position of the next node is implied through the node pointer,
+        // we need to manually move it around a bit.
         const op_pointer = self.node_pointer;
-        self.node_pointer += 1;
+        self.node_pointer += 1; // skip the operator for now
+
         try self.emitTerm();
         const after_term_pointer = self.node_pointer;
+
         self.node_pointer = op_pointer;
         try self.emitOperator();
-        self.node_pointer = after_term_pointer;
+
+        self.node_pointer = after_term_pointer; // restore the pointer as if nothing ever happened
     }
 }
 
@@ -619,7 +600,7 @@ fn emitFunctionCall(self: *Self) Error!void {
         .identifier => blk: {
             const identifier = self.readStringLoc(func_name_node.data.identifier);
             const name = try std.mem.concat(
-                self.compilation.alloc,
+                self.compilation.arena,
                 u8,
                 &.{
                     self.class_name,
@@ -627,8 +608,6 @@ fn emitFunctionCall(self: *Self) Error!void {
                     identifier,
                 },
             );
-            errdefer self.compilation.alloc.free(name);
-            try self.strings_that_need_to_be_freed.append(name);
 
             parameter_count = 1;
 
@@ -662,25 +641,19 @@ fn emitFunctionCall(self: *Self) Error!void {
                 });
 
                 const name = try std.mem.concat(
-                    self.compilation.alloc,
+                    self.compilation.arena,
                     u8,
                     &.{ obj.type, ".", method_name },
                 );
-                errdefer self.compilation.alloc.free(name);
-
-                try self.strings_that_need_to_be_freed.append(name);
 
                 break :blk name;
             } else {
                 // hmmm, maybe a function then?
                 const name = try std.mem.concat(
-                    self.compilation.alloc,
+                    self.compilation.arena,
                     u8,
                     &.{ obj_name, ".", method_name },
                 );
-                errdefer self.compilation.alloc.free(name);
-
-                try self.strings_that_need_to_be_freed.append(name);
 
                 break :blk name;
             }

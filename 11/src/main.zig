@@ -16,6 +16,10 @@ pub fn main() !u8 {
     const alloc = gpa.allocator();
     defer _ = gpa.deinit();
 
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    const arena_alloc = arena.allocator();
+    defer arena.deinit();
+
     const args = try std.process.argsAlloc(alloc);
     defer std.process.argsFree(alloc, args);
 
@@ -26,7 +30,7 @@ pub fn main() !u8 {
     const cwd = std.fs.cwd();
     const inputPath = args[1];
 
-    var comp = Compilation.init(alloc);
+    var comp = Compilation.init(alloc, arena_alloc);
     defer comp.deinit();
 
     const input_stat = cwd.statFile(inputPath) catch |err| {

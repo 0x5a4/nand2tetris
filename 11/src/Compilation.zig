@@ -10,11 +10,13 @@ const vm = @import("vm.zig");
 const Self = @This();
 
 alloc: Allocator,
+arena: Allocator,
 errors: std.ArrayList(Error),
 
-pub fn init(alloc: Allocator) Self {
+pub fn init(alloc: Allocator, arena: Allocator) Self {
     return .{
         .alloc = alloc,
+        .arena = arena,
         .errors = std.ArrayList(Error).init(alloc),
     };
 }
@@ -57,13 +59,13 @@ pub fn printErrors(self: *const Self) void {
 pub fn dumpAst(self: *Self, dir: *const std.fs.Dir, path: []const u8) !void {
     const basename = std.fs.path.basename(path);
     const stem = std.fs.path.stem(basename);
-    const outputPath = try std.mem.concat(self.alloc, u8, &.{ stem, ".xml" });
-    defer self.alloc.free(outputPath);
+    const outputPath = try std.mem.concat(self.arena, u8, &.{ stem, ".xml" });
+    defer self.arena.free(outputPath);
 
     std.log.info("Ast '{s}' -> '{s}'", .{ basename, outputPath });
 
-    const text = try dir.readFileAlloc(self.alloc, path, 4e+9);
-    defer self.alloc.free(text);
+    const text = try dir.readFileAlloc(self.arena, path, 4e+9);
+    defer self.arena.free(text);
 
     const outputFile = try dir.createFile(outputPath, .{});
     defer outputFile.close();
@@ -82,13 +84,12 @@ pub fn dumpAst(self: *Self, dir: *const std.fs.Dir, path: []const u8) !void {
 pub fn compile(self: *Self, dir: *const std.fs.Dir, path: []const u8) !void {
     const basename = std.fs.path.basename(path);
     const stem = std.fs.path.stem(basename);
-    const outputPath = try std.mem.concat(self.alloc, u8, &.{ stem, ".vm" });
-    defer self.alloc.free(outputPath);
+    const outputPath = try std.mem.concat(self.arena, u8, &.{ stem, ".vm" });
 
     std.log.info("Compile '{s}' -> '{s}'", .{ basename, outputPath });
 
-    const text = try dir.readFileAlloc(self.alloc, path, 4e+9);
-    defer self.alloc.free(text);
+    const text = try dir.readFileAlloc(self.arena, path, 4e+9);
+    defer self.arena.free(text);
 
     const outputFile = try dir.createFile(outputPath, .{});
     defer outputFile.close();
