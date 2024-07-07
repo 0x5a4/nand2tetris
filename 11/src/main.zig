@@ -8,7 +8,7 @@ const Compilation = @import("Compilation.zig");
 const Allocator = std.mem.Allocator;
 
 pub const std_options: std.Options = .{
-    .log_level = .debug,
+    .log_level = .info,
 };
 
 pub fn main() !u8 {

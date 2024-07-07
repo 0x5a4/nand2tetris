@@ -1002,11 +1002,13 @@ test "parse expression" {
 
     try testParser(
         parseExpression,
-        "myvar[3]",
+        "myvar[3] + 3",
         .{
             .{ .expression, 1 },
             .{ .array_access, 0 },
             .{ .expression, 1 },
+            .{ .integer_literal, 3 },
+            .{ .operator, .add },
             .{ .integer_literal, 3 },
         },
         .{"myvar"},

@@ -516,34 +516,22 @@ fn emitExpression(self: *Self) Error!void {
     std.debug.assert(node.tag == .expression);
 
     var child_count = node.data.expression;
-    while (child_count > 0) : (child_count -|= 3) {
-        // lhs
-        try self.instructions.append(.{ .label = "emit lhs term " });
+
+    try self.emitTerm();
+
+    while (child_count > 1) : (child_count -= 2) {
+        const op_pointer = self.node_pointer;
+        self.node_pointer += 1;
         try self.emitTerm();
-
-        // operator?
-        const maybe_operator = self.peekNode();
-
-        if (maybe_operator.tag == .operator) {
-            // this is so ugly. first we skip the operator to emit the next term, then we emit the
-            // operator. and because we dont pass actual nodes around we do this node_pointer
-            // kerfuffle
-            const op_pointer = self.node_pointer;
-            self.node_pointer += 1;
-            try self.instructions.append(.{ .label = "emit rhs term " });
-            try self.emitTerm();
-            const after_term_pointer = self.node_pointer;
-            self.node_pointer = op_pointer;
-            try self.emitOperator();
-            self.node_pointer = after_term_pointer;
-        }
+        const after_term_pointer = self.node_pointer;
+        self.node_pointer = op_pointer;
+        try self.emitOperator();
+        self.node_pointer = after_term_pointer;
     }
 }
 
 fn emitTerm(self: *Self) Error!void {
     const node = self.peekNode();
-
-    std.log.debug("got {}", .{node.tag});
 
     switch (node.tag) {
         .integer_literal => try self.emitIntegerLiteral(),
@@ -666,8 +654,6 @@ fn emitReadArrayAccess(self: *Self) Error!void {
     const symbol = self.lookupSymbol(identifier) orelse
         unreachable; // TODO: handle the error
 
-    try self.instructions.append(.{ .label = "begin array access" });
-
     try self.emitExpression();
 
     try self.instructions.appendSlice(&.{
@@ -753,8 +739,6 @@ fn emitStringLiteral(self: *Self) Error!void {
 fn emitOperator(self: *Self) Error!void {
     const node = self.popNode();
     std.debug.assert(node.tag == .operator);
-
-    try self.instructions.append(.{ .label = "begin operator" });
 
     switch (node.data.operator) {
         .add => try self.instructions.append(.{ .add = {} }),
