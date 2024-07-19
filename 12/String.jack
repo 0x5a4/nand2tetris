@@ -10,34 +10,54 @@
  * string-oriented operations.
  */
 class String {
+    field int length;
+    field Array buf;
 
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int maxLength) {
+        let length = 0;
+        let buf = Memory.alloc(maxLength);
+
+        return this;
     }
 
     /** Disposes this string. */
     method void dispose() {
+        do Memory.deAlloc(buf);
+        return; 
     }
 
     /** Returns the current length of this string. */
     method int length() {
+        return length
     }
 
     /** Returns the character at the j-th location of this string. */
     method char charAt(int j) {
+        return buf[j];
     }
 
     /** Sets the character at the j-th location of this string to c. */
     method void setCharAt(int j, char c) {
+        let buf[j] = c;
+        return;
     }
 
     /** Appends c to this string's end and returns this string. */
     method String appendChar(char c) {
+        let buf[length] = c;
+        let length = length + 1; 
+        return;
     }
 
     /** Erases the last character from this string. */
     method void eraseLastChar() {
+        if (length > 0) {
+            let length = length - 1;
+        }
+
+        return;
     }
 
     /** Returns the integer value of this string, 
@@ -51,13 +71,16 @@ class String {
 
     /** Returns the new line character. */
     function char newLine() {
+        return 128;
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
+        return 129;
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
+        return 34;
     }
 }

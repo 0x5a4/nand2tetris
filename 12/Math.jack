@@ -10,11 +10,24 @@
  *  using calls to OS functions in this class.
  */
 class Math {
+    // NOTE: find ich irgendwie recht unnötig die anzahl bits hier zu speichern....
     static int n;             // Number of bits used for representing a two's complement integer
     static Array powersOfTwo; // Stores 2^0, 2^1, 2^2,..., 2^(n-1)
 
     // Initializes the Math library.
     function void init() {
+        let n = 16;
+        let powersOfTwo = Array.new(8);
+        let powersOfTwo[0] = 1;
+        let powersOfTwo[1] = 2;
+        let powersOfTwo[2] = 4;
+        let powersOfTwo[3] = 8;
+        let powersOfTwo[4] = 16;
+        let powersOfTwo[5] = 32;
+        let powersOfTwo[6] = 64;
+        let powersOfTwo[7] = 128;
+        // mehr brauchen wir nicht
+        return;
     }
 
     /** Returns the product of x and y. 
@@ -22,6 +35,25 @@ class Math {
      *  in an expression, it handles it by invoking this method. 
      *  Thus, in Jack, x * y and Math.multiply(x,y) return the same value. */
     function int multiply(int x, int y) {
+        var int sum;
+        var int shiftedX;
+        var int bitmask;
+        var int i;
+
+        let shiftedX = x;
+        let bitmask = 1;
+
+        while(i < 16) {
+            if (~((y & bitmask) = 0)) {
+                let sum = sum + shiftedX; 
+            }
+            
+            let bitmask = bitmask + bitmask;
+            let shiftedX = shiftedX + shiftedX;
+            let i = i + 1;
+        }
+
+        return sum;
     }
 
     /** Returns the integer part of x / y.
@@ -29,21 +61,94 @@ class Math {
      *  an an expression, it handles it by invoking this method.
      *  Thus, x/y and Math.divide(x,y) return the same value. */
     function int divide(int x, int y) {
+        var int result;
+        var boolean sign;
+        
+        if (((x < 0) & (y > -1)) | ((y < 0) & (x > -1))) {
+            let sign = true;
+        }
+        
+        // mutable parameter sind SO eine beschissene Idee
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+        let result = Math.divide_recursive(x, y);
+
+        if (sign) {
+            let result = (~result) + 1;
+        }
+
+        return result;
+    }
+
+    function int divide_recursive(int x, int y) {
+        var int q;
+        var int qq;
+        var int z;
+        
+        if ((y > x) | (y < 0)) {
+            return 0;
+        }
+
+        let q = Math.divide_recursive(x, y + y);
+        let qq = q + q;
+        let z = x - (qq * y);
+
+        if (z < y) {
+            return qq;
+        } else {
+            return qq + 1; 
+        }
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        var int y;
+        var int q;
+        var int j;
+        var int twopowj;
+
+        let j = 7; // n / 2 - 1
+
+        while (j > -1) {
+            let twopowj = powersOfTwo[j];
+            let q = y + twopowj; 
+            let q = q*q;
+
+            if (((q < x) | (q = x)) & (q > 0)) {
+                let y = y + twopowj;
+            }
+            
+            let j = j - 1;
+        }
+
+        return y;
     }
 
     /** Returns the greater value. */
     function int max(int a, int b) {
+        if (a < b) {
+            return b;
+        }
+        
+        return a;
     }
 
     /** Returns the smaller value. */
     function int min(int a, int b) {
+        if (a > b) {
+            return b;
+        }
+        
+        return a;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        if (x < 0) {
+            return ~x + 1;
+        }
+
+        return x;
     }
 }

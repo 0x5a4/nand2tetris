@@ -10,7 +10,7 @@ pub fn build(b: *std.Build) void {
         .ReleaseSafe, .ReleaseFast, .ReleaseSmall => true,
     };
 
-    const exe = b.addExecutable(.{ .name = "hackvmc", .root_source_file = b.path("src/main.zig"), .target = target, .optimize = optimize, .strip = is_release });
+    const exe = b.addExecutable(.{ .name = "jackc", .root_source_file = b.path("src/main.zig"), .target = target, .optimize = optimize, .strip = is_release });
 
     const pure_asm_option = b.option(bool, "pure-asm", "dont generate comments in asm output") orelse false;
 

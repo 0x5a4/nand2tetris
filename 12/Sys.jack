@@ -10,6 +10,9 @@ class Sys {
 
     /** Performs all the initializations required by the OS. */
     function void init() {
+        do Math.init()
+        do Main.main();
+        return;
     }
 
     /** Halts the program execution. */

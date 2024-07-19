@@ -2,32 +2,48 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Memory.jack
-/**
+/*
  * This library provides two services: direct access to the computer's main
  * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
  * consists of 32,768 words, each holding a 16-bit binary number.
  */ 
 class Memory {
+    static Array nullptr; 
+    static int free; // es tut mir so leid :/
 
     /** Initializes the class. */
     function void init() {
+        let free = 2048;
+        return;
     }
 
     /** Returns the RAM value at the given address. */
     function int peek(int address) {
+        return nullptr[address];
     }
 
     /** Sets the RAM value at the given address to the given value. */
     function void poke(int address, int value) {
+        let nullptr[address] = value;
+        return;
     }
 
     /** Finds an available RAM block of the given size and returns
      *  a reference to its base address. */
     function int alloc(int size) {
+        var int addr;
+        let addr = free;
+        
+        let free = free + size;
+
+        return addr;
     }
 
     /** De-allocates the given object (cast as an array) by making
      *  it available for future allocations. */
     function void deAlloc(Array o) {
+        // also wenn ich die size wüsste, dann könnte man sogar noch probieren 
+        // etwas zu befreien wenn es das letzt objekt ist
+        return;
     }    
 }
