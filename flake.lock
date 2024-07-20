@@ -23,16 +23,17 @@
         "flake-utils": [
           "flake-utils"
         ],
+        "nand2tetris-tools-zip": "nand2tetris-tools-zip",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1715023999,
-        "narHash": "sha256-vVjXEql9AWQz/exj6KHi/k7xhinZWXOjzPj34v1oY5Y=",
+        "lastModified": 1721428828,
+        "narHash": "sha256-I/pe/rjKscQRJqL8gUqv3QUiYkRAz4LZG2nuhPQ9cCw=",
         "owner": "0x5a4",
         "repo": "nand2tetris-flake",
-        "rev": "0f355b7ca3e2cbfb7092d6ac3eb18b4ba286611d",
+        "rev": "8d38396e41dcda247827386f1cb84c95e8784694",
         "type": "github"
       },
       "original": {
@@ -41,13 +42,25 @@
         "type": "github"
       }
     },
+    "nand2tetris-tools-zip": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-Prtvoxm740O20TdG8AMigtVpRmXHBsOlbrm77lZZpA8=",
+        "type": "file",
+        "url": "https://drive.google.com/uc?export=download&id=1xZzcMIUETv3u3sdpM_oTJSTetpVee3KZ"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://drive.google.com/uc?export=download&id=1xZzcMIUETv3u3sdpM_oTJSTetpVee3KZ"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1712604496,
-        "narHash": "sha256-Ye1R+k60uo0B3mn5xwsgb0PzceSg9y0E2OMYQnizLD0=",
+        "lastModified": 1721403608,
+        "narHash": "sha256-X5+QA5K3J2KA20YEaBJ+GKDj/XIb5PutHmphgYQUszA=",
         "owner": "NixOs",
         "repo": "nixpkgs",
-        "rev": "ed6db4c403cc2fc4924d24e1a2a2f148c6152620",
+        "rev": "ad0111043c09f7d0f6b9f039882cbf350d4f7d49",
         "type": "github"
       },
       "original": {

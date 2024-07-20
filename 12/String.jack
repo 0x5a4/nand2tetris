@@ -17,20 +17,24 @@ class String {
      *  and initial length of 0. */
     constructor String new(int maxLength) {
         let length = 0;
-        let buf = Memory.alloc(maxLength);
+        if (maxLength > 0) {
+            let buf = Memory.alloc(maxLength);
+        }
 
         return this;
     }
 
     /** Disposes this string. */
     method void dispose() {
-        do Memory.deAlloc(buf);
+        if (~(buf = 0)) {
+            do Memory.deAlloc(buf);
+        }
         return; 
     }
 
     /** Returns the current length of this string. */
     method int length() {
-        return length
+        return length;
     }
 
     /** Returns the character at the j-th location of this string. */
@@ -48,7 +52,7 @@ class String {
     method String appendChar(char c) {
         let buf[length] = c;
         let length = length + 1; 
-        return;
+        return this;
     }
 
     /** Erases the last character from this string. */
@@ -63,10 +67,73 @@ class String {
     /** Returns the integer value of this string, 
      *  until a non-digit character is detected. */
     method int intValue() {
+        var int result, i;
+        var char c;
+        var boolean negative;
+
+        if (buf[0] = 45) {
+            let i = 1;
+            let negative = true;
+        }
+
+        while (i < length) {
+            let c = buf[i];
+            
+            if ((c > 47) & (c < 58)) {
+                let result = result * 10 + (c - 48);
+            } else {
+                return result;
+            }
+
+            let i = i + 1;
+        }
+
+        if (negative) {
+            let result = ~result + 1;
+        }
+
+        return result;
     }
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
+        var int digit;
+        var int divten;
+        var Array tmpBuf;
+        var int i;
+        var boolean prependMinus;
+
+        let tmpBuf = Array.new(6);
+
+        if (val < 0) {
+            let val = -val;
+            let prependMinus = true;
+        }
+
+        while (0 < val) {
+            let divten = val / 10;
+            
+            let digit = val - (10 * divten);
+            let tmpBuf[i] = digit + 48;
+
+            let i = i + 1;
+            let val = divten;
+        }
+        
+        let length = 0;
+
+        if (prependMinus) {
+            do appendChar(45);
+        }
+
+        while (0 < i) {
+            do appendChar(tmpBuf[i - 1]);
+            let i = i - 1;
+        }
+
+        do tmpBuf.dispose();
+
+        return;
     }
 
     /** Returns the new line character. */

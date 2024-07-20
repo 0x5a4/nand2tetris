@@ -32,9 +32,10 @@ class Output {
     
         let charMaps = Array.new(127);
         
-        // NOTE: aber... das ist ineffizient. 31 bytes gehen den bach runter :(
         // Black square, used for displaying non-printable characters.
         do Output.create(0,63,63,63,63,63,63,63,63,63,0,0);
+        
+        // NOTE: aber... das ist ineffizient. 31 bytes gehen den bach runter :(
 
         // Assigns the bitmap for each character in the charachter set.
         // The first parameter is the character index, the next 11 numbers
@@ -75,7 +76,7 @@ class Output {
         do Output.create(64,30,51,51,59,59,59,27,3,30,0,0);  // @
         do Output.create(63,30,51,51,24,12,12,0,12,12,0,0);  // ?
 
-        do Output.create(65,0,60,66,66,66,66,126,66,66,66,66);          // A ** TO BE FILLED **
+        do Output.create(65,60,66,66,66,66,126,66,66,66,0,0);          // A ** TO BE FILLED **
         do Output.create(66,31,51,51,51,31,51,51,51,31,0,0); // B
         do Output.create(67,28,54,35,3,3,3,35,54,28,0,0);    // C
         do Output.create(68,15,27,51,51,51,51,51,27,15,0,0); // D
@@ -181,9 +182,29 @@ class Output {
     /** Moves the cursor to the j-th column of the i-th row,
      *  and erases the character displayed there. 
      */
-    function void moveCursor(int i, int j) {
-        let y = i;
-        let x = j;
+    function void moveCursor(int cy, int cx) {
+        var int addr;
+        var int value;
+        var int i;
+        
+        let x = cx;
+        let y = cy;
+
+        let addr = (y * 352) + (x / 2) + 16384;
+        
+        while (i < 11) {
+            let value = Memory.peek(addr);
+            if ((x & 1) = 1) {
+                do Memory.poke(addr, value & 255);
+            } else {
+                do Memory.poke(addr, value & -256);
+            }
+
+            let addr = addr + 32;
+            let i = i + 1;
+        }
+        
+
         return;
     }
 
@@ -193,6 +214,8 @@ class Output {
     function void printChar(char c) {
         var Array map;
         var int i;
+        var int addr;
+        var int value;
 
         if (c = 128) {
             do Output.println();
@@ -200,9 +223,21 @@ class Output {
         }
 
         let map = Output.getMap(c);
-  
+        
+        let addr = (y * 352) + (x / 2) + 16384;
+        
         while (i < 11) {
-            do Memory.poke(y * 64 + x, map[i]);
+            let value = Memory.peek(addr);
+            
+            if ((x & 1) = 1) {
+                let value = value & 255;
+                do Memory.poke(addr, value | (map[i] * 256));
+            } else {
+                let value = value & -256;
+                do Memory.poke(addr, value | map[i]); 
+            }
+
+            let addr = addr + 32;
             let i = i + 1;
         }
 
@@ -222,29 +257,41 @@ class Output {
         var int i;
         var int strLen;
 
+        let strLen = s.length();
+
+        while (i < strLen) {
+            do Output.printChar(s.charAt(i));
+            let i = i + 1;
+        }
+
         return;
-
-        // let strLen = s.length();
-
-        // while (i < strLen ) {
-        //     do Output.printChar(s.charAt(i));
-        //     let i = i + 1;
-        // }
-
-        // return;
     }
 
     /** Displays the given integer starting at the cursor location,
      *  and advances the cursor appropriately. 
      */
     function void printInt(int i) {
-        return; 
+        var String s;
+        let s = String.new(6);
+
+        do s.setInt(i);
+
+        do Output.printString(s);
+
+        do s.dispose();
+        return;
     }
 
     /** Advances the cursor to the beginning of the next line. */
     function void println() {
         let x = 0;
-        let y = y + 1;
+        
+        if (y = 22) {
+            let y = 0;
+        } else {
+            let y = y + 1;
+        }
+        
         return;
     }
 
@@ -252,7 +299,10 @@ class Output {
     function void backSpace() {
         if (x = 0) {
             let x = 63;
-            let y = y - 1;
+            
+            if (~(y = 0)) {
+                let y = y + 1;
+            }
         } else {
             let x = x - 1;
         }

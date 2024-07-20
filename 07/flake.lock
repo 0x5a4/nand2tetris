@@ -41,11 +41,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1705309234,
-        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
+        "lastModified": 1710146030,
+        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
+        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
         "type": "github"
       },
       "original": {
@@ -57,20 +57,33 @@
     "nand2tetris": {
       "inputs": {
         "flake-utils": "flake-utils_2",
+        "nand2tetris-tools-zip": "nand2tetris-tools-zip",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1715023999,
-        "narHash": "sha256-vVjXEql9AWQz/exj6KHi/k7xhinZWXOjzPj34v1oY5Y=",
+        "lastModified": 1721428828,
+        "narHash": "sha256-I/pe/rjKscQRJqL8gUqv3QUiYkRAz4LZG2nuhPQ9cCw=",
         "owner": "0x5a4",
         "repo": "nand2tetris-flake",
-        "rev": "0f355b7ca3e2cbfb7092d6ac3eb18b4ba286611d",
+        "rev": "8d38396e41dcda247827386f1cb84c95e8784694",
         "type": "github"
       },
       "original": {
         "owner": "0x5a4",
         "repo": "nand2tetris-flake",
         "type": "github"
+      }
+    },
+    "nand2tetris-tools-zip": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-Prtvoxm740O20TdG8AMigtVpRmXHBsOlbrm77lZZpA8=",
+        "type": "file",
+        "url": "https://drive.google.com/uc?export=download&id=1xZzcMIUETv3u3sdpM_oTJSTetpVee3KZ"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://drive.google.com/uc?export=download&id=1xZzcMIUETv3u3sdpM_oTJSTetpVee3KZ"
       }
     },
     "nixpkgs": {
@@ -91,11 +104,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1706063522,
-        "narHash": "sha256-o1m9en7ovSjyktXgX3n/6GJEwG06WYa/9Mfx5hTTf5g=",
+        "lastModified": 1718622336,
+        "narHash": "sha256-lywfxWRBn+lwdKaBy5x5uTkbCcEPUonCn6bK8OQPsw4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "95c1439b205d507f3cb88aae76e02cd6a01ac504",
+        "rev": "d0fc4188d246ab953653f00e9ce0cf51d10d5eda",
         "type": "github"
       },
       "original": {
@@ -162,11 +175,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1714958137,
-        "narHash": "sha256-Xn8hziZWSuNGscMKNdBhrHUhfH3NZC9m0oIKwCcCYtg=",
+        "lastModified": 1721438460,
+        "narHash": "sha256-5mlraDpF6QJd6PgDXt+nCaesj1SanQMa4HFFqf+XgGM=",
         "owner": "Cloudef",
         "repo": "zig2nix",
-        "rev": "362cc6f3fe27d73f3663d8c2c25f23ca75151ed6",
+        "rev": "143b5190aa03652c7f17cfc8e8b68c719a097d8b",
         "type": "github"
       },
       "original": {

@@ -13,4 +13,4 @@
 - [x] 9 - High Level Language
 - [x] 10 - Syntax Analysis
 - [x] 11 - Code Generation
-- [ ] 12 - Operating System
+- [x] 12 - Operating System
