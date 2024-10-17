@@ -39,20 +39,33 @@
     "nand2tetris": {
       "inputs": {
         "flake-utils": "flake-utils_2",
+        "nand2tetris-tools-zip": "nand2tetris-tools-zip",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1715023999,
-        "narHash": "sha256-vVjXEql9AWQz/exj6KHi/k7xhinZWXOjzPj34v1oY5Y=",
+        "lastModified": 1721551897,
+        "narHash": "sha256-3gz27jok2sPl6WGOnB3M1WPaiwjVIq2/xiMCYcfPmgs=",
         "owner": "0x5a4",
         "repo": "nand2tetris-flake",
-        "rev": "0f355b7ca3e2cbfb7092d6ac3eb18b4ba286611d",
+        "rev": "0f83101b4ab3aba4e0b4033af61a744dacac1d68",
         "type": "github"
       },
       "original": {
         "owner": "0x5a4",
         "repo": "nand2tetris-flake",
         "type": "github"
+      }
+    },
+    "nand2tetris-tools-zip": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-Prtvoxm740O20TdG8AMigtVpRmXHBsOlbrm77lZZpA8=",
+        "type": "file",
+        "url": "https://drive.google.com/uc?export=download&id=1xZzcMIUETv3u3sdpM_oTJSTetpVee3KZ"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://drive.google.com/uc?export=download&id=1xZzcMIUETv3u3sdpM_oTJSTetpVee3KZ"
       }
     },
     "nixpkgs": {
