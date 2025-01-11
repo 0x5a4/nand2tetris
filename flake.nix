@@ -81,7 +81,7 @@
           jackc-part1 = buildZigPackage ./10;
           week10 = self.packages.${system}.jackc-part1;
 
-          jackc = buildZigPackage ./10;
+          jackc = buildZigPackage ./11;
           week11 = self.packages.${system}.jackc;
         };
 
